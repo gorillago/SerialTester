@@ -16,6 +16,7 @@ public class Listener implements SerialPortEventListener {
     int failedTests = 0;
     int maxConsecutive = 0;
     int testNumber = 0;
+    boolean testDone = false;
 
     String currentTest = "";
     @Override
@@ -27,11 +28,15 @@ public class Listener implements SerialPortEventListener {
                 String str = new String(buffer);
                 if (str.contains("DM1 Tester=V3")) {
                     currentTest = "";
+                    testDone = false;
                 }
-                currentTest += str;
-                if (str.contains("Test: ")) {
-                    printCurrent();
+                if (!testDone) {
+                    currentTest += str;
+                    if (str.contains("Test: ")) {
+                        printCurrent();
+                    }
                 }
+
             }catch (SerialPortException e) {
                 e.printStackTrace();
             }
@@ -46,7 +51,7 @@ public class Listener implements SerialPortEventListener {
         boolean currentPassed = completeTest.testPassed();
 
         if (completeTest.firstTest) {
-            System.out.println("_____New Card_____");
+            System.out.println("__________New Card__________");
             currentTests.clear();
             failedTests = 0;
             maxConsecutive = 0;
@@ -62,12 +67,19 @@ public class Listener implements SerialPortEventListener {
             }
             System.out.println("Test " + testNumber + " passed. " + currentTests.size() +
                     " consecutive passed tests (Max is " + maxConsecutive + "). Failed " + failedTests + " time(s).");
-
+            if (maxConsecutive >= 10) {
+                testDone = true;
+                System.out.println("Completed 10 consecutive tests successfully. Card is good.");
+            }
         } else {
             System.out.println(completeTest.testText);
-            System.out.println("Test " + testNumber + " failed. Testing continuing.");
+            System.out.println("Test " + testNumber + " failed. Trying to get 10 consecutive tests.");
             currentTests.clear();
             failedTests++;
+            if (failedTests > 1 && maxConsecutive < 10) {
+                testDone = true;
+                System.out.println("Failed to complete 10 consecutive tests twice. Card considered failed. Plaese power off tester and insert new card.");
+            }
         }
 
     }
