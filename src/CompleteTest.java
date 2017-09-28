@@ -40,8 +40,14 @@ public class CompleteTest {
     }
 
     public boolean testPassed() {
-        boolean passed = (initAnalog.passed && initdigitalPassed && initStartPassed && finalAnalog.passed &&
-                fifoTestPassed && sgtpPassed && etpPassed && utpPassed && finalDigitalPassed);
+        boolean passed = false;
+        if (initAnalog != null && finalAnalog != null) {
+            passed = (initAnalog.passed && initdigitalPassed && initStartPassed && finalAnalog.passed &&
+                    fifoTestPassed && sgtpPassed && etpPassed && utpPassed && finalDigitalPassed);
+        } else {
+            passed = false;
+        }
+
         return passed;
     }
 }

@@ -69,7 +69,7 @@ public class Listener implements SerialPortEventListener {
                     " consecutive passed tests (Max is " + maxConsecutive + "). Failed " + failedTests + " time(s).");
             if (maxConsecutive >= 10) {
                 testDone = true;
-                System.out.println("Completed 10 consecutive tests successfully. Card is good.");
+                System.out.println("Completed 10 consecutive tests successfully. Card is considered good.  Plaese power off tester and insert new card.");
             }
         } else {
             System.out.println(completeTest.testText);
